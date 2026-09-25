@@ -1,0 +1,23 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated ML artifacts / plots
+confusion_matrix.png
+shap_importance.png

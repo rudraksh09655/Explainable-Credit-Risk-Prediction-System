@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}History – LoanPredict AI{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h4><i class="bi bi-clock-history me-2"></i>Prediction History</h4>
+  {% if rows %}
+  <form method="POST" action="{{ url_for('delete_history') }}" onsubmit="return confirm('Delete all history?')">
+    <button class="btn btn-outline-danger btn-sm">
+      <i class="bi bi-trash me-1"></i>Delete History
+    </button>
+  </form>
+  {% endif %}
+</div>
+
+{% if not rows %}
+  <div class="glass p-5 text-center">
+    <i class="bi bi-inbox" style="font-size:3rem;color:rgba(255,255,255,0.3);"></i>
+    <h5 class="mt-3 text-white-70">No predictions yet.</h5>
+    <a href="{{ url_for('predict') }}" class="btn btn-primary mt-3">Make Your First Prediction</a>
+  </div>
+{% else %}
+
+  <!-- Charts Row -->
+  <div class="row g-4 mb-4">
+    {% if charts.pie %}
+    <div class="col-md-6">
+      <div class="glass p-3 text-center">
+        <h6 class="mb-3">Loan Status Distribution</h6>
+        <img src="data:image/png;base64,{{ charts.pie }}" class="chart-img"/>
+      </div>
+    </div>
+    {% endif %}
+    {% if charts.bar %}
+    <div class="col-md-6">
+      <div class="glass p-3 text-center">
+        <h6 class="mb-3">Predictions by Property Area</h6>
+        <img src="data:image/png;base64,{{ charts.bar }}" class="chart-img"/>
+      </div>
+    </div>
+    {% endif %}
+    {% if charts.kde %}
+    <div class="col-md-6">
+      <div class="glass p-3 text-center">
+        <h6 class="mb-3">Income Distribution by Result</h6>
+        <img src="data:image/png;base64,{{ charts.kde }}" class="chart-img"/>
+      </div>
+    </div>
+    {% endif %}
+    {% if charts.trend %}
+    <div class="col-md-6">
+      <div class="glass p-3 text-center">
+        <h6 class="mb-3">Loan Amount Over Time</h6>
+        <img src="data:image/png;base64,{{ charts.trend }}" class="chart-img"/>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Table -->
+  <div class="glass p-4">
+    <h6 class="mb-3">All Records</h6>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>#</th><th>Date</th><th>Income</th><th>Loan Amt</th>
+            <th>Area</th><th>Credit</th><th>Confidence</th><th>Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+          <tr>
+            <td class="text-white-70 small">{{ loop.index }}</td>
+            <td class="small">{{ r.created_at.strftime('%d %b %Y %H:%M') if r.created_at else '—' }}</td>
+            <td>{{ '{:,.0f}'.format(r.income) if r.income is not none else '—' }}</td>
+            <td>{{ r.loan_amount | int }}</td>
+            <td><span class="badge" style="background:rgba(99,102,241,0.4);">{{ r.property_area }}</span></td>
+            <td>{{ '✅' if r.credit_history else '❌' }}</td>
+            <td>{{ r.confidence }}%</td>
+            <td>
+              {% if r.result == 'Approved' %}
+                <span class="badge bg-success">✅ Approved</span>
+              {% else %}
+                <span class="badge bg-danger">❌ Rejected</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}

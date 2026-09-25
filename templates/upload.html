@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Upload Dataset – LoanPredict AI{% endblock %}
+{% block content %}
+
+<h4 class="mb-4"><i class="bi bi-cloud-upload me-2"></i>Upload Dataset</h4>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="glass p-4">
+      <p class="text-white-70">Upload a CSV loan dataset to preview its content and basic distribution charts.</p>
+      <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Select CSV File</label>
+          <input type="file" name="dataset" accept=".csv" class="form-control" required/>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-upload me-2"></i>Upload & Analyse
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    {% if preview %}
+    <div class="glass p-4 mb-4">
+      <h6 class="mb-3">📋 Preview (first 10 rows)</h6>
+      <div class="table-responsive" style="font-size:0.78rem;">
+        {{ preview | safe }}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if stats_chart %}
+    <div class="glass p-4">
+      <h6 class="mb-3">📊 Numeric Column Distributions</h6>
+      <img src="data:image/png;base64,{{ stats_chart }}" class="chart-img"/>
+    </div>
+    {% endif %}
+
+    {% if not preview and not stats_chart %}
+    <div class="glass p-5 text-center h-100 d-flex flex-column align-items-center justify-content-center">
+      <i class="bi bi-file-earmark-bar-graph" style="font-size:3rem;color:rgba(255,255,255,0.3);"></i>
+      <h5 class="mt-3 text-white-70">Upload a CSV to see preview &amp; charts here.</h5>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

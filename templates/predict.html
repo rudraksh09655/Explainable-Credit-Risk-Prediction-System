@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Predict – LoanPredict AI{% endblock %}
+{% block content %}
+<div class="row g-4">
+
+  <!-- Form -->
+  <div class="col-lg-5">
+    <div class="glass p-4">
+      <h4 class="mb-4"><i class="bi bi-cpu me-2"></i>Loan Application Form</h4>
+      <form method="POST" action="{{ url_for('predict') }}">
+
+        <div class="row g-3">
+          <div class="col-6">
+            <label class="form-label">Gender</label>
+            <select name="gender" class="form-select">
+              <option value="1">Male</option>
+              <option value="0">Female</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Married</label>
+            <select name="married" class="form-select">
+              <option value="1">Yes</option>
+              <option value="0">No</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Dependents</label>
+            <select name="dependents" class="form-select">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3+">3+</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Education</label>
+            <select name="education" class="form-select">
+              <option value="1">Graduate</option>
+              <option value="0">Not Graduate</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Self Employed</label>
+            <select name="self_employed" class="form-select">
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Credit History</label>
+            <select name="credit_history" class="form-select">
+              <option value="1">Good (1)</option>
+              <option value="0">Bad (0)</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Property Area</label>
+            <select name="property_area" class="form-select">
+              <option>Urban</option>
+              <option>Semiurban</option>
+              <option>Rural</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Applicant Income (₹)</label>
+            <input type="number" name="income" class="form-control" placeholder="e.g. 5000" min="0" required/>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Loan Amount (₹)</label>
+            <input type="number" name="loan_amount" class="form-control" placeholder="e.g. 150" min="0" required/>
+          </div>
+          <div class="col-6">
+            <label class="form-label">Loan Term (months)</label>
+            <input type="number" name="loan_term" class="form-control" placeholder="e.g. 360" min="0" required/>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-4 py-2">
+          <i class="bi bi-send me-2"></i>Submit for Prediction
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="col-lg-7">
+    {% if result %}
+    <div class="glass p-4 mb-4 text-center">
+      {% if result == "Approved" %}
+        <i class="bi bi-check-circle-fill" style="font-size:4rem;color:#22c55e;"></i>
+        <h2 class="mt-3" style="color:#22c55e;">🎉 Loan Approved!</h2>
+        <p class="text-white-70">The applicant qualifies for the loan based on the provided information.</p>
+      {% else %}
+        <i class="bi bi-x-circle-fill" style="font-size:4rem;color:#ef4444;"></i>
+        <h2 class="mt-3" style="color:#ef4444;">❌ Loan Rejected</h2>
+        <p class="text-white-70">The applicant does not meet the criteria for loan approval.</p>
+      {% endif %}
+    </div>
+
+    {% if shap_chart %}
+    <div class="glass p-4">
+      <h5 class="mb-3"><i class="bi bi-lightbulb me-2 text-warning"></i>SHAP Feature Explanation</h5>
+      <p class="text-white-70 small mb-3">Green bars pushed the model towards <b>Approved</b>, red bars towards <b>Rejected</b>.</p>
+      <img src="data:image/png;base64,{{ shap_chart }}" class="chart-img"/>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="glass p-5 text-center h-100 d-flex flex-column align-items-center justify-content-center">
+      <i class="bi bi-arrow-left-circle" style="font-size:3rem;color:rgba(255,255,255,0.3);"></i>
+      <h5 class="mt-3 text-white-70">Fill in the form and click <br/><strong style="color:#fff;">Submit for Prediction</strong></h5>
+      <p class="text-white-70 small mt-2">Results + SHAP explanation will appear here.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
